@@ -1,0 +1,99 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# SCHEMA GRAPHQL — LIVRARIA
+#
+# Este arquivo é o CONTRATO da API GraphQL.
+# Define todos os tipos de dados, queries e mutations disponíveis.
+# O Spring for GraphQL lê este arquivo automaticamente na inicialização.
+#
+# ! = campo obrigatório (nunca nulo)
+# [ ] = lista
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── TIPOS DE DADOS ────────────────────────────────────────────────────────────
+
+type Livro {
+    id:             ID!
+    titulo:         String!
+    isbn:           String!
+    sinopse:        String
+    numPaginas:     Int
+    editora:        String
+    idioma:         String
+    anoPublicacao:  Int
+    preco:          Float!
+    autor:          Autor!          # relacionamento — o resolver busca automaticamente
+    avaliacoes:     [Avaliacao!]!   # relacionamento — o resolver busca automaticamente
+}
+
+type Autor {
+    id:             ID!
+    nome:           String!
+    nacionalidade:  String
+    biografia:      String
+    livros:         [Livro!]!
+}
+
+type Avaliacao {
+    id:        ID!
+    nota:      Int!
+    comentario: String
+    avaliador:  String!
+}
+
+# ── INPUT TYPES (para mutations) ───────────────────────────────────────────────
+
+input CriarLivroInput {
+    titulo:        String!
+    isbn:          String!
+    sinopse:       String
+    numPaginas:    Int
+    editora:       String
+    idioma:        String
+    anoPublicacao: Int
+    preco:         Float!
+    autorId:       ID!
+}
+
+input AtualizarLivroInput {
+    titulo: String
+    preco:  Float
+}
+
+input CriarAvaliacaoInput {
+    nota:       Int!
+    comentario: String
+    avaliador:  String!
+    livroId:    ID!
+}
+
+# ── QUERIES (leitura) ─────────────────────────────────────────────────────────
+
+type Query {
+    # Busca todos os livros
+    livros: [Livro!]!
+
+    # Busca um livro pelo ID
+    livro(id: ID!): Livro
+
+    # Busca todos os autores
+    autores: [Autor!]!
+
+    # Busca um autor pelo ID
+    autor(id: ID!): Autor
+}
+
+# ── MUTATIONS (escrita) ───────────────────────────────────────────────────────
+
+type Mutation {
+    # Cria um novo livro e retorna os dados criados
+    criarLivro(input: CriarLivroInput!): Livro!
+
+    # Atualiza campos de um livro e retorna o livro atualizado
+    atualizarLivro(id: ID!, input: AtualizarLivroInput!): Livro
+
+    # Deleta um livro e retorna mensagem de confirmação
+    deletarLivro(id: ID!): String!
+
+    # Cria uma avaliação para um livro
+    criarAvaliacao(input: CriarAvaliacaoInput!): Avaliacao!
+}

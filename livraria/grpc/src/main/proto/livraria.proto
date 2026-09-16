@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option java_package = "com.livraria.grpc.proto";
+option java_outer_classname = "LivrariaProto";
+option java_multiple_files = true;
+
+package livraria;
+
+service LivrariaService {
+    rpc BuscarLivro (BuscarLivroRequest) returns (LivroResponse);
+
+    rpc StreamCatalogo (FiltroRequest) returns (stream LivroResponse);
+
+    rpc AtualizarPrecos (stream AtualizarPrecoRequest) returns (ResumoAtualizacao);
+
+    rpc MonitorarPrecos (stream MonitorarRequest) returns (stream PrecoUpdate);
+}
+
+message BuscarLivroRequest {
+    int64 id = 1;
+}
+
+message FiltroRequest {
+    string autor = 1;
+}
+
+message AtualizarPrecoRequest {
+    int64  id         = 1;
+    double novo_preco = 2;
+}
+
+message MonitorarRequest {
+    int64 livro_id = 1;
+}
+
+message LivroResponse {
+    int64  id             = 1;
+    string titulo         = 2;
+    string autor          = 3;
+    double preco          = 4;
+    int32  ano_publicacao = 5;
+}
+
+message ResumoAtualizacao {
+    int32  total_atualizados = 1;
+    string mensagem          = 2;
+}
+
+message PrecoUpdate {
+    int64  livro_id = 1;
+    string titulo   = 2;
+    double preco    = 3;
+}

@@ -1,0 +1,78 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# SCHEMA GRAPHQL — LIVRARIA
+#
+# Este arquivo é o CONTRATO da API GraphQL.
+# Define todos os tipos de dados, queries e mutations disponíveis.
+# O Spring for GraphQL lê este arquivo automaticamente na inicialização.
+#
+# ! = campo obrigatório (nunca nulo)
+# [ ] = lista
+# ─────────────────────────────────────────────────────────────────────────────
+
+type Livro {
+    id:             ID!
+    titulo:         String!
+    isbn:           String!
+    sinopse:        String
+    numPaginas:     Int
+    editora:        String
+    idioma:         String
+    anoPublicacao:  Int
+    preco:          Float!
+    autor:          Autor!
+    avaliacoes:     [Avaliacao!]!
+}
+
+type Autor {
+    id:             ID!
+    nome:           String!
+    nacionalidade:  String
+    biografia:      String
+    livros:         [Livro!]!
+}
+
+type Avaliacao {
+    id:        ID!
+    nota:      Int!
+    comentario: String
+    avaliador:  String!
+}
+
+input CriarLivroInput {
+    titulo:        String!
+    isbn:          String!
+    sinopse:       String
+    numPaginas:    Int
+    editora:       String
+    idioma:        String
+    anoPublicacao: Int
+    preco:         Float!
+    autorId:       ID!
+}
+
+input AtualizarLivroInput {
+    titulo: String
+    preco:  Float
+}
+
+input CriarAvaliacaoInput {
+    nota:       Int!
+    comentario: String
+    avaliador:  String!
+    livroId:    ID!
+}
+
+type Query {
+    livros: [Livro!]!
+    livro(id: ID!): Livro
+    autores: [Autor!]!
+    autor(id: ID!): Autor
+}
+
+
+type Mutation {
+    criarLivro(input: CriarLivroInput!): Livro!
+    atualizarLivro(id: ID!, input: AtualizarLivroInput!): Livro
+    deletarLivro(id: ID!): String!
+    criarAvaliacao(input: CriarAvaliacaoInput!): Avaliacao!
+}
